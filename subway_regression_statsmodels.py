@@ -1,5 +1,6 @@
 import numpy as np
 import pandas
+import random
 import statsmodels.api as sm
 
 
@@ -16,14 +17,15 @@ def add_dummy_features(data, column, features):
 features = ['day_week', 'day_week_p2', 'hour', 'hour_p2', 'hour_p3']
 turnstile_data, features = add_dummy_features(turnstile_data, 'UNIT', features)
 
+random.seed(9187492341)
+msk = np.random.rand(len(turnstile_data)) < 0.8
 turnstile_data_train = turnstile_data[msk]
 turnstile_data_test = turnstile_data[~msk]
 
-dataframe = turnstile_data_train
-features_data = dataframe[features]
+features_data = turnstile_data_train[features]
 
 # Values
-values = dataframe['ENTRIESn_hourly']
+values = turnstile_data_train['ENTRIESn_hourly']
 m = len(values)
 
 features_data['ones'] = np.ones(m) # Add a column of 1s (y intercept)
@@ -43,4 +45,4 @@ def compute_r_squared(data, predictions):
     
     return r_squared
     
-print("My variance score: %s" % (compute_r_squared(turnstile_data_test['ENTRIESn_hourly'].values, predictions.A1)))
+print("Variance score: %s" % (compute_r_squared(turnstile_data_test['ENTRIESn_hourly'].values, predictions.A1)))

@@ -1,5 +1,7 @@
-from sklearn import datasets, linear_model
+from sklearn import linear_model
+import numpy as np
 import pandas
+import random
 
 
 turnstile_data = pandas.read_csv('turnstile_weather_v2.csv')
@@ -15,12 +17,13 @@ def add_dummy_features(data, column, features):
 features = ['day_week', 'day_week_p2', 'hour', 'hour_p2', 'hour_p3']
 turnstile_data, features = add_dummy_features(turnstile_data, 'UNIT', features)
 
+random.seed(9187492341)
+msk = np.random.rand(len(turnstile_data)) < 0.8
 turnstile_data_train = turnstile_data[msk]
 turnstile_data_test = turnstile_data[~msk]
 
 regr = linear_model.LinearRegression()
 
-# Train the model using the training sets
 regr.fit(turnstile_data_train[features], turnstile_data_train['ENTRIESn_hourly'])
 
 print '%-20s: %s' % ("Intercept", regr.intercept_)

@@ -1,5 +1,6 @@
 import numpy as np
 import pandas
+import random
 
 
 turnstile_data = pandas.read_csv('turnstile_weather_v2.csv')
@@ -15,6 +16,8 @@ def add_dummy_features(data, column, features):
 features = ['day_week', 'day_week_p2', 'hour', 'hour_p2', 'hour_p3']
 turnstile_data, features = add_dummy_features(turnstile_data, 'UNIT', features)
 
+random.seed(9187492341)
+msk = np.random.rand(len(turnstile_data)) < 0.8
 turnstile_data_train = turnstile_data[msk]
 turnstile_data_test = turnstile_data[~msk]
 
@@ -32,9 +35,6 @@ def compute_cost(features, values, theta):
     """
     Compute the cost function given a set of features / values, 
     and the values for our thetas.
-    
-    This can be the same code as the compute_cost function in the lesson #3 exercises,
-    but feel free to implement your own.
     """
     
     m = len(values)
@@ -45,10 +45,8 @@ def compute_cost(features, values, theta):
 
 def gradient_descent(features, values, theta, alpha, num_iterations):
     """
-    Perform gradient descent given a data set with an arbitrary number of features.
-    
-    This can be the same gradient descent code as in the lesson #3 exercises,
-    but feel free to implement your own.
+    Perform gradient descent given a data set with an arbitrary number of 
+    features.
     """
     
     m = len(values)
@@ -56,17 +54,17 @@ def gradient_descent(features, values, theta, alpha, num_iterations):
 
     for i in range(num_iterations):
         print("Iteration %s" % (i))
-        theta = theta + (alpha/m)*np.dot(values - np.dot(features, theta), features)
+        theta = theta + (alpha/m)*np.dot(
+            values - np.dot(features, theta), features)
         cost = compute_cost(features, values, theta)
         print("Cost is %s" % (cost))
         cost_history.append(cost)
     return theta, pandas.Series(cost_history)
 
-dataframe = turnstile_data_train
-features_data = dataframe[features]
+features_data = turnstile_data_train[features]
 
 # Values
-values = dataframe['ENTRIESn_hourly']
+values = turnstile_data_train['ENTRIESn_hourly']
 m = len(values)
 
 print("Normalizing features.")
@@ -80,7 +78,6 @@ alpha = 0.1
 num_iterations = 75
 
 print("Performing gradient descent.")
-# Initialize theta, perform gradient descent
 theta_gradient_descent = np.zeros(len(features_data.columns))
 theta_gradient_descent, cost_history = gradient_descent(features_array, 
                                                         values_array, 
@@ -97,4 +94,5 @@ def compute_r_squared(data, predictions):
     
     return r_squared
     
-print("My variance score: %s" % (compute_r_squared(turnstile_data_test['ENTRIESn_hourly'].values, predictions.A1)))
+print("Variance score: %s" % (
+    compute_r_squared(turnstile_data_test['ENTRIESn_hourly'].values, predictions.A1)))
