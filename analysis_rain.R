@@ -1,0 +1,1 @@
+# same station, day of week, hour, rain vs no-rain
