@@ -52,5 +52,3 @@ ggplot(turnstile_data_top_station, aes(date, total_entries_k, group="d")) +
   ylab("# entries (thousands)")
 ggsave(filename = "entries_by_station.png", width = 8, height = 16)
 
-# group by date, hour, sum(entries)
-# group by day_week, hour, mean(entries)
